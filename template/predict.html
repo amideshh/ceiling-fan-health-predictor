@@ -5,301 +5,490 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>AI Fan Health Prediction</title>
+    <title>AI Fan Health Predictor</title>
 
     <style>
         * {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --text: #172033;
+            --muted: #64748b;
+            --border: #e2e8f0;
+            --surface: #ffffff;
+            --background: #f4f7fc;
         }
 
         body {
-            margin: 0;
-            padding: 25px 15px;
-            font-family: Arial, sans-serif;
-            background: #f1f5f9;
-            color: #172033;
+            font-family: Arial, Helvetica, sans-serif;
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: #102a56;
+            color: white;
+            padding: 18px 24px;
+        }
+
+        .nav-inner {
+            max-width: 1100px;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .brand {
+            font-size: 19px;
+            font-weight: 700;
+        }
+
+        .badge {
+            font-size: 12px;
+            padding: 6px 11px;
+            border-radius: 20px;
+            background: #1e4074;
+            color: #dbeafe;
         }
 
         .container {
-            max-width: 850px;
-            margin: auto;
+            width: min(1100px, 92%);
+            margin: 35px auto;
         }
 
-        .header {
+        .hero {
             text-align: center;
-            margin-bottom: 25px;
+            padding: 20px 10px 32px;
         }
 
-        .header h1 {
-            color: #173b72;
+        .hero-icon {
+            font-size: 42px;
             margin-bottom: 8px;
         }
 
+        .hero h1 {
+            font-size: clamp(27px, 4vw, 38px);
+            line-height: 1.25;
+            color: #173b72;
+            margin-bottom: 12px;
+        }
+
+        .hero p {
+            color: var(--muted);
+            max-width: 650px;
+            margin: auto;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 24px;
+            align-items: start;
+        }
+
         .card {
-            background: white;
-            padding: 25px;
-            margin-bottom: 22px;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.07);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 26px;
+            box-shadow: 0 8px 28px rgba(15, 23, 42, 0.05);
+        }
+
+        .card-heading {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            margin-bottom: 12px;
+        }
+
+        .icon-box {
+            width: 48px;
+            height: 48px;
+            border-radius: 13px;
+            display: grid;
+            place-items: center;
+            font-size: 25px;
+            background: #eff6ff;
+            flex-shrink: 0;
+        }
+
+        .temperature-icon {
+            background: #fff7ed;
         }
 
         .card h2 {
-            margin-top: 0;
             color: #173b72;
+            font-size: 21px;
+            line-height: 1.35;
         }
 
         .description {
-            color: #64748b;
-            line-height: 1.6;
+            color: var(--muted);
+            font-size: 14px;
+            margin-bottom: 22px;
         }
 
         label {
             display: block;
-            margin: 15px 0 8px;
-            font-weight: bold;
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 9px;
         }
 
-        input[type="number"],
-        input[type="file"] {
+        input[type="file"],
+        input[type="number"] {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            background: white;
+            border-radius: 10px;
+            background: #fff;
+            color: var(--text);
+            font-size: 14px;
         }
 
-        button {
+        input:focus {
+            outline: 2px solid #bfdbfe;
+            border-color: var(--primary);
+        }
+
+        .hint {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 8px;
+        }
+
+        .button {
+            display: block;
             width: 100%;
             border: none;
-            padding: 13px;
-            margin-top: 18px;
-            border-radius: 8px;
-            background: #2563eb;
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-top: 20px;
+            background: var(--primary);
             color: white;
-            font-size: 16px;
-            font-weight: bold;
+            font-size: 15px;
+            font-weight: 700;
             cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
         }
 
-        button:hover {
-            background: #1d4ed8;
+        .button:hover {
+            background: var(--primary-dark);
+        }
+
+        .button:active {
+            transform: scale(0.99);
+        }
+
+        .temperature-button {
+            background: #ea580c;
+        }
+
+        .temperature-button:hover {
+            background: #c2410c;
         }
 
         .result {
-            padding: 18px;
-            margin-top: 20px;
-            border-radius: 10px;
-            background: #f8fafc;
-            border: 1px solid #cbd5e1;
+            margin-top: 22px;
+            padding: 19px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            overflow-wrap: anywhere;
         }
 
         .result h3 {
-            margin-top: 0;
+            font-size: 14px;
+            margin-bottom: 8px;
         }
 
         .result-value {
-            font-size: 22px;
-            font-weight: bold;
-            margin: 10px 0;
+            font-size: 23px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .result p {
+            font-size: 14px;
         }
 
         .normal {
-            color: #15803d;
             background: #f0fdf4;
             border-color: #86efac;
+            color: #166534;
         }
 
         .risk {
-            color: #b91c1c;
             background: #fef2f2;
             border-color: #fca5a5;
+            color: #991b1b;
         }
 
         .warning {
-            color: #a16207;
-            background: #fefce8;
-            border-color: #fde047;
+            background: #fffbeb;
+            border-color: #fcd34d;
+            color: #92400e;
         }
 
         .error {
-            margin-top: 15px;
-            padding: 12px;
-            border-radius: 8px;
-            color: #b91c1c;
+            margin-top: 18px;
+            padding: 13px 15px;
+            border-radius: 10px;
             background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+            font-size: 14px;
+            overflow-wrap: anywhere;
         }
 
         .note {
-            font-size: 13px;
-            color: #64748b;
-            line-height: 1.5;
+            margin-top: 17px;
+            font-size: 12px;
+            line-height: 1.6;
+            color: var(--muted);
         }
 
-        footer {
+        .footer {
             text-align: center;
-            color: #64748b;
-            padding: 10px;
+            color: var(--muted);
+            padding: 28px 10px;
+            font-size: 13px;
+        }
+
+        .divider {
+            border: 0;
+            border-top: 1px solid var(--border);
+            margin: 23px 0;
+        }
+
+        @media (max-width: 760px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                margin-top: 22px;
+            }
+
+            .card {
+                padding: 21px;
+            }
+
+            .navbar {
+                padding: 15px;
+            }
+
+            .brand {
+                font-size: 16px;
+            }
         }
     </style>
 </head>
 
 <body>
 
-<div class="container">
+    <nav class="navbar">
+        <div class="nav-inner">
+            <div class="brand">⚙️ AI Device Health</div>
+            <span class="badge">ML PROJECT</span>
+        </div>
+    </nav>
 
-    <header class="header">
-        <h1>⚙️ AI Device Health Prediction</h1>
-        <p class="description">
-            Analyze fan audio and check temperature.
-        </p>
-    </header>
+    <main class="container">
 
+        <header class="hero">
+            <div class="hero-icon">🌀</div>
+            <h1>Ceiling Fan Health Predictor</h1>
+            <p>
+                Analyze fan sound using a machine learning model
+                and check temperature using demo thresholds.
+            </p>
+        </header>
 
-    <!-- FAN AUDIO ANALYSIS -->
+        <div class="grid">
 
-    <section class="card">
+            <!-- FAN AUDIO ANALYSIS -->
 
-        <h2>🎧 Fan Audio Analysis</h2>
+            <section class="card">
 
-        <p class="description">
-            Upload a fan WAV audio recording to analyze it
-            using your saved machine learning model.
-        </p>
+                <div class="card-heading">
+                    <div class="icon-box">🎧</div>
+                    <div>
+                        <h2>Fan Audio Analysis</h2>
+                    </div>
+                </div>
 
-        <form method="POST"
-              enctype="multipart/form-data">
-
-            {% csrf_token %}
-
-            <input type="hidden"
-                   name="form_type"
-                   value="audio">
-
-            <label for="audio_file">
-                Select Fan Audio (.wav)
-            </label>
-
-            <input type="file"
-                   id="audio_file"
-                   name="audio_file"
-                   accept=".wav,audio/wav"
-                   required>
-
-            <button type="submit">
-                Analyze Fan Audio
-            </button>
-
-        </form>
-
-
-        {% if audio_result %}
-
-            <div class="result
-                {% if audio_status == 'normal' %}normal
-                {% elif audio_status == 'risk' %}risk
-                {% else %}warning{% endif %}">
-
-                <h3>Audio Analysis Result</h3>
-
-                <p class="result-value">
-                    {{ audio_result }}
+                <p class="description">
+                    Upload a WAV recording of your ceiling fan.
+                    The saved ML model will classify the audio.
                 </p>
 
-                <p>{{ audio_message }}</p>
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
 
-            </div>
+                    <input
+                        type="hidden"
+                        name="form_type"
+                        value="audio"
+                    >
 
-        {% endif %}
+                    <label for="audio_file">
+                        Select fan audio
+                    </label>
 
+                    <input
+                        type="file"
+                        id="audio_file"
+                        name="audio_file"
+                        accept=".wav,audio/wav,audio/x-wav"
+                        required
+                    >
 
-        {% if audio_error %}
-            <div class="error">
-                {{ audio_error }}
-            </div>
-        {% endif %}
+                    <p class="hint">
+                        WAV audio only. Use a clear recording of the fan.
+                    </p>
 
-    </section>
+                    <button class="button" type="submit">
+                        Analyze Fan Audio →
+                    </button>
+                </form>
 
+                {% if audio_result %}
+                    <div class="result
+                        {% if audio_status == 'normal' %}
+                            normal
+                        {% elif audio_status == 'risk' %}
+                            risk
+                        {% else %}
+                            warning
+                        {% endif %}
+                    ">
+                        <h3>Audio Analysis Result</h3>
 
-    <!-- TEMPERATURE CHECKER -->
+                        <div class="result-value">
+                            {{ audio_result }}
+                        </div>
 
-    <section class="card">
+                        <p>{{ audio_message }}</p>
+                    </div>
+                {% endif %}
 
-        <h2>🌡️ Temperature Health Checker</h2>
+                {% if audio_error %}
+                    <div class="error">
+                        {{ audio_error }}
+                    </div>
+                {% endif %}
 
-        <p class="description">
-            Enter the temperature to view the demo status.
-        </p>
-
-        <form method="POST">
-
-            {% csrf_token %}
-
-            <input type="hidden"
-                   name="form_type"
-                   value="temperature">
-
-            <label for="temperature">
-                Temperature (°C)
-            </label>
-
-            <input type="number"
-                   id="temperature"
-                   name="temperature"
-                   step="any"
-                   required
-                   placeholder="Enter temperature">
-
-            <button type="submit">
-                Check Temperature
-            </button>
-
-        </form>
-
-
-        {% if status %}
-
-            <div class="result
-                {% if status == 'Normal' %}normal
-                {% elif status == 'Warning' %}warning
-                {% else %}risk{% endif %}">
-
-                <h3>Temperature Analysis Result</h3>
-
-                <p class="result-value">
-                    {{ status }}
+                <p class="note">
+                    Important: This is an experimental prediction,
+                    not a confirmed diagnosis. If unusual noise
+                    continues, switch off the fan and have it inspected.
                 </p>
 
-                <p>
-                    Temperature:
-                    <strong>{{ temperature }} °C</strong>
+            </section>
+
+
+            <!-- TEMPERATURE CHECKER -->
+
+            <section class="card">
+
+                <div class="card-heading">
+                    <div class="icon-box temperature-icon">🌡️</div>
+                    <div>
+                        <h2>Temperature Checker</h2>
+                    </div>
+                </div>
+
+                <p class="description">
+                    Enter a temperature in Celsius to see the
+                    demo status produced by the current rules.
                 </p>
 
-            </div>
+                <form method="POST">
+                    {% csrf_token %}
 
-        {% endif %}
+                    <input
+                        type="hidden"
+                        name="form_type"
+                        value="temperature"
+                    >
 
+                    <label for="temperature">
+                        Temperature (°C)
+                    </label>
 
-        {% if error %}
-            <div class="error">
-                {{ error }}
-            </div>
-        {% endif %}
+                    <input
+                        type="number"
+                        id="temperature"
+                        name="temperature"
+                        step="any"
+                        placeholder="Example: 26"
+                        required
+                    >
 
-        <p class="note">
-            Note: The temperature thresholds in this demo are
-            manually configured. They are not a trained AI model
-            and may not be appropriate for every device.
-        </p>
+                    <button
+                        class="button temperature-button"
+                        type="submit"
+                    >
+                        Check Temperature →
+                    </button>
+                </form>
 
-    </section>
+                {% if status %}
+                    <div class="result
+                        {% if status == 'Normal' %}
+                            normal
+                        {% elif status == 'Warning' %}
+                            warning
+                        {% else %}
+                            risk
+                        {% endif %}
+                    ">
+                        <h3>Temperature Result</h3>
 
+                        <div class="result-value">
+                            {{ status }}
+                        </div>
 
-    <footer>
-        AI Device Health Prediction Project
-    </footer>
+                        <p>
+                            Entered temperature:
+                            <strong>{{ temperature }} °C</strong>
+                        </p>
+                    </div>
+                {% endif %}
 
-</div>
+                {% if error %}
+                    <div class="error">
+                        {{ error }}
+                    </div>
+                {% endif %}
+
+                <hr class="divider">
+
+                <p class="note">
+                    Temperature status uses manually configured demo
+                    thresholds in views.py. It is not a trained AI
+                    model and is not a safety assessment of the fan.
+                </p>
+
+            </section>
+
+        </div>
+
+        <footer class="footer">
+            <p>AI Device Health Prediction · Ceiling Fan Health Predictor</p>
+            <p>Experimental machine learning project</p>
+        </footer>
+
+    </main>
 
 </body>
 </html>
