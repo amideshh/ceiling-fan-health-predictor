@@ -8,19 +8,14 @@ import numpy as np
 
 from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
-
+from pathlib import Path
 
 # =====================================================
 # PROJECT PATHS
 # =====================================================
 
-BASE_DIR = r"D:\AI_Device_Healt_Prediction"
-
-MODEL_PATH = os.path.join(
-    BASE_DIR,
-    "models",
-    "fan_random_forest.pkl",
-)
+BASE_DIR = Path(__file__).resolve().parent.parent
+MODEL_PATH = BASE_DIR / "models" / "fan_random_forest.pkl"
 
 
 # =====================================================
