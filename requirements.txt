@@ -4,3 +4,4 @@ gunicorn==26.2.0
 joblib
 numpy
 scikit-learn
+librosa
