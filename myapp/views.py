@@ -167,11 +167,9 @@ def predict_fan(request):
                     print("Model path:", MODEL_PATH)
                     print("Model exists:", os.path.isfile(MODEL_PATH))
 
-                    # Extract audio features
                     features = extract_features(temp_path)
                     print("Feature shape:", features.shape)
 
-                    # Load model and predict
                     model = load_audio_model()
                     prediction = model.predict(features)[0]
 
