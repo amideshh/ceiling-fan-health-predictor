@@ -94,13 +94,15 @@ def extract_features(audio_path):
 # LOAD SAVED MODEL
 # =====================================================
 
+
 def load_audio_model():
-    if not os.path.exists(MODEL_PATH):
+    if not MODEL_PATH.is_file():
         raise FileNotFoundError(
-            "Saved audio model not found: " + MODEL_PATH
+            "Saved audio model not found: " + str(MODEL_PATH)
         )
 
     return joblib.load(MODEL_PATH)
+
 
 
 # =====================================================
