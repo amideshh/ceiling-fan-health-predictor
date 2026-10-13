@@ -15,7 +15,9 @@ from pathlib import Path
 # =====================================================
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-MODEL_PATH = BASE_DIR / "models" / "fan_random_forest.pkl"
+
+MODEL_PATH = BASE_DIR / "fan_random_forest.pkl"
+
 
 
 # =====================================================
