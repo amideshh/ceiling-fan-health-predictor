@@ -1,0 +1,272 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Temperature Health Checker</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #0b1120;
+            color: #f1f5f9;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            background: #151e30;
+            border: 1px solid #2b3a52;
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .icon {
+            font-size: 48px;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 26px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #a6b4ca;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 28px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #40516c;
+            border-radius: 10px;
+            background: #0b1120;
+            color: white;
+            font-size: 16px;
+            outline: none;
+            margin-bottom: 18px;
+        }
+
+        input:focus {
+            border-color: #38bdf8;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: #0284c7;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background: #0369a1;
+        }
+
+        .result {
+            margin-top: 24px;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            background: #202d42;
+        }
+
+        .result h2 {
+            font-size: 19px;
+            margin-bottom: 12px;
+        }
+
+        .temperature-value {
+            font-size: 32px;
+            font-weight: bold;
+            margin: 12px 0;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+
+        .normal {
+            color: #4ade80;
+            background: #123a2a;
+        }
+
+        .warning {
+            color: #facc15;
+            background: #403615;
+        }
+
+        .high {
+            color: #f87171;
+            background: #451c25;
+        }
+
+        .error {
+            color: #fca5a5;
+            margin-top: 18px;
+            text-align: center;
+        }
+
+        .thresholds {
+            margin-top: 22px;
+            padding: 16px;
+            background: #0b1120;
+            border-radius: 10px;
+            font-size: 13px;
+            line-height: 2;
+            color: #cbd5e1;
+        }
+
+        .thresholds h3 {
+            color: #f1f5f9;
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+
+        .note {
+            color: #94a3b8;
+            font-size: 12px;
+            line-height: 1.6;
+            margin-top: 12px;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 24px;
+            color: #7dd3fc;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 450px) {
+            .container {
+                padding: 24px 18px;
+            }
+
+            h1 {
+                font-size: 23px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="container">
+
+        <div class="icon">🌡️</div>
+
+        <h1>Temperature Health Checker</h1>
+
+        <p class="subtitle">
+            Enter the temperature manually in degrees Celsius (°C)
+            to check the demo status.
+        </p>
+
+        <form method="POST" action="{% url 'temperature_check' %}">
+            {% csrf_token %}
+
+            <label for="temperature">Temperature (°C)</label>
+
+            <input
+                type="number"
+                step="any"
+                id="temperature"
+                name="temperature"
+                placeholder="Example: 26.5"
+                value="{{ temperature|default_if_none:'' }}"
+                required
+            >
+
+            <button type="submit">Check Temperature</button>
+        </form>
+
+        {% if status %}
+        <section class="result" aria-live="polite">
+            <h2>Temperature Analysis Result</h2>
+
+            {% if temperature is not None %}
+                <p>Entered Temperature</p>
+                <div class="temperature-value">
+                    {{ temperature }} °C
+                </div>
+            {% endif %}
+
+            {% if status == "Normal" %}
+                <div class="status normal">● Normal</div>
+            {% elif status == "Warning" %}
+                <div class="status warning">● Warning</div>
+            {% elif status == "High" %}
+                <div class="status high">● High</div>
+            {% else %}
+                <p>{{ status }}</p>
+            {% endif %}
+        </section>
+        {% endif %}
+
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+
+        <div class="thresholds">
+            <h3>Demo Temperature Ranges</h3>
+            <p>🟢 Below 25°C — Normal</p>
+            <p>🟡 25°C to below 27°C — Warning</p>
+            <p>🔴 27°C or above — High</p>
+
+            <p class="note">
+                These are demonstration thresholds only.
+                They are not validated fan safety limits.
+                This page uses rule-based classification,
+                not a trained machine learning model.
+            </p>
+        </div>
+
+        <a class="back-link"
+           href="{% url 'Device' %}">
+            ← Back to Fan Audio Analysis
+        </a>
+
+    </main>
+</body>
+</html>

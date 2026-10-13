@@ -1,0 +1,305 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Fan Health Prediction</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 25px 15px;
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+            color: #172033;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            color: #173b72;
+            margin-bottom: 8px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            margin-bottom: 22px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.07);
+        }
+
+        .card h2 {
+            margin-top: 0;
+            color: #173b72;
+        }
+
+        .description {
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        label {
+            display: block;
+            margin: 15px 0 8px;
+            font-weight: bold;
+        }
+
+        input[type="number"],
+        input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            background: white;
+        }
+
+        button {
+            width: 100%;
+            border: none;
+            padding: 13px;
+            margin-top: 18px;
+            border-radius: 8px;
+            background: #2563eb;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        .result {
+            padding: 18px;
+            margin-top: 20px;
+            border-radius: 10px;
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+        }
+
+        .result h3 {
+            margin-top: 0;
+        }
+
+        .result-value {
+            font-size: 22px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .normal {
+            color: #15803d;
+            background: #f0fdf4;
+            border-color: #86efac;
+        }
+
+        .risk {
+            color: #b91c1c;
+            background: #fef2f2;
+            border-color: #fca5a5;
+        }
+
+        .warning {
+            color: #a16207;
+            background: #fefce8;
+            border-color: #fde047;
+        }
+
+        .error {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            color: #b91c1c;
+            background: #fef2f2;
+        }
+
+        .note {
+            font-size: 13px;
+            color: #64748b;
+            line-height: 1.5;
+        }
+
+        footer {
+            text-align: center;
+            color: #64748b;
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <header class="header">
+        <h1>⚙️ AI Device Health Prediction</h1>
+        <p class="description">
+            Analyze fan audio and check temperature.
+        </p>
+    </header>
+
+
+    <!-- FAN AUDIO ANALYSIS -->
+
+    <section class="card">
+
+        <h2>🎧 Fan Audio Analysis</h2>
+
+        <p class="description">
+            Upload a fan WAV audio recording to analyze it
+            using your saved machine learning model.
+        </p>
+
+        <form method="POST"
+              enctype="multipart/form-data">
+
+            {% csrf_token %}
+
+            <input type="hidden"
+                   name="form_type"
+                   value="audio">
+
+            <label for="audio_file">
+                Select Fan Audio (.wav)
+            </label>
+
+            <input type="file"
+                   id="audio_file"
+                   name="audio_file"
+                   accept=".wav,audio/wav"
+                   required>
+
+            <button type="submit">
+                Analyze Fan Audio
+            </button>
+
+        </form>
+
+
+        {% if audio_result %}
+
+            <div class="result
+                {% if audio_status == 'normal' %}normal
+                {% elif audio_status == 'risk' %}risk
+                {% else %}warning{% endif %}">
+
+                <h3>Audio Analysis Result</h3>
+
+                <p class="result-value">
+                    {{ audio_result }}
+                </p>
+
+                <p>{{ audio_message }}</p>
+
+            </div>
+
+        {% endif %}
+
+
+        {% if audio_error %}
+            <div class="error">
+                {{ audio_error }}
+            </div>
+        {% endif %}
+
+    </section>
+
+
+    <!-- TEMPERATURE CHECKER -->
+
+    <section class="card">
+
+        <h2>🌡️ Temperature Health Checker</h2>
+
+        <p class="description">
+            Enter the temperature to view the demo status.
+        </p>
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <input type="hidden"
+                   name="form_type"
+                   value="temperature">
+
+            <label for="temperature">
+                Temperature (°C)
+            </label>
+
+            <input type="number"
+                   id="temperature"
+                   name="temperature"
+                   step="any"
+                   required
+                   placeholder="Enter temperature">
+
+            <button type="submit">
+                Check Temperature
+            </button>
+
+        </form>
+
+
+        {% if status %}
+
+            <div class="result
+                {% if status == 'Normal' %}normal
+                {% elif status == 'Warning' %}warning
+                {% else %}risk{% endif %}">
+
+                <h3>Temperature Analysis Result</h3>
+
+                <p class="result-value">
+                    {{ status }}
+                </p>
+
+                <p>
+                    Temperature:
+                    <strong>{{ temperature }} °C</strong>
+                </p>
+
+            </div>
+
+        {% endif %}
+
+
+        {% if error %}
+            <div class="error">
+                {{ error }}
+            </div>
+        {% endif %}
+
+        <p class="note">
+            Note: The temperature thresholds in this demo are
+            manually configured. They are not a trained AI model
+            and may not be appropriate for every device.
+        </p>
+
+    </section>
+
+
+    <footer>
+        AI Device Health Prediction Project
+    </footer>
+
+</div>
+
+</body>
+</html>
