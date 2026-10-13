@@ -1,2 +1,6 @@
+
 Django==5.2.5
 gunicorn==26.2.0
+joblib
+numpy
+scikit-learn
